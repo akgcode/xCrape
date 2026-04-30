@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import urllib.parse
-
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -15,14 +13,12 @@ class TelegramBotMessenger:
 
     @retry(wait=wait_exponential(multiplier=1, min=2, max=30), stop=stop_after_attempt(3))
     async def send_message(self, chat_id: str, text: str) -> None:
-        url = (
-            f"https://api.telegram.org/bot{self._token}/sendMessage"
-            f"?chat_id={urllib.parse.quote(chat_id)}"
-            f"&text={urllib.parse.quote(text)}"
-            f"&parse_mode=Markdown"
-        )
+        url = f"https://api.telegram.org/bot{self._token}/sendMessage"
         try:
-            response = await self._client.get(url)
+            response = await self._client.post(
+                url,
+                json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"},
+            )
             response.raise_for_status()
         except (httpx.TransportError, httpx.HTTPStatusError) as exc:
             raise TelegramDeliveryError(f"Telegram delivery failed: {exc}") from exc

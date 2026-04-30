@@ -5,6 +5,11 @@ from dataclasses import dataclass
 from xcrape.domain.value_objects.tweet_id import TweetId
 
 
+def _esc(text: str) -> str:
+    """Escape HTML special characters in user-supplied content."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 @dataclass
 class Tweet:
     id: TweetId
@@ -21,8 +26,8 @@ class Tweet:
         verified = "✅ " if (self.user_verified or self.user_is_blue_verified) else ""
         followers = f"{self.user_followers_count:,}"
         return (
-            f"🔔 *{self.keyword}*\n"
-            f"👤 *{self.user_name}* (@{self.username}) · {verified}{followers} followers\n\n"
-            f"{self.text}\n\n"
+            f"🔔 <b>{_esc(self.keyword)}</b>\n"
+            f"👤 <b>{_esc(self.user_name)}</b> (@{_esc(self.username)}) · {verified}{followers} followers\n\n"
+            f"{_esc(self.text)}\n\n"
             f"🔗 {self.tweet_link}"
         )
