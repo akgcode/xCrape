@@ -1,0 +1,10 @@
+search:
+  query_type: "Top"   # Top | Latest | People | Photos | Videos
+  count: 5            # tweets returned per keyword per run
+  keywords:
+    - "gold crypto"
+    - "gold mining"
+    - "XAUUSD"
+
+scheduler:
+  interval_hours: 0.05   # job cadence
